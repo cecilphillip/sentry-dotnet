@@ -34,32 +34,16 @@ public class SentryOptions
     /// </remarks>
     internal IScopeStackContainer? ScopeStackContainer { get; set; }
 
+    /// <summary>
+    /// Specifies whether to use global scope management mode.
+    /// Should usually be <c>true</c> for client applications and <c>false</c> for server applications.
+    /// The default is <c>true</c> for Blazor WASM, MAUI, and mobile targets, or <c>false</c> otherwise.
+    /// </summary>
+    public bool IsGlobalModeEnabled { get; set; }
 #if __MOBILE__
-    private bool _isGlobalModeEnabled = true;
-    /// <summary>
-    /// Specifies whether to use global scope management mode.
-    /// Should be <c>true</c> for client applications and <c>false</c> for server applications.
-    /// The default is <c>true</c> for mobile targets.
-    /// </summary>
-    public bool IsGlobalModeEnabled
-    {
-        get => _isGlobalModeEnabled;
-        set
-        {
-            _isGlobalModeEnabled = value;
-            if (!value)
-            {
-                _diagnosticLogger?.LogWarning("Global Mode should usually be enabled on {0}", DeviceInfo.PlatformName);
-            }
-        }
-    }
+        = true;
 #else
-    /// <summary>
-    /// Specifies whether to use global scope management mode.
-    /// Should be <c>true</c> for client applications and <c>false</c> for server applications.
-    /// The default is <c>false</c>. The default for Blazor WASM, MAUI, and Mobile apps is <c>true</c>.
-    /// </summary>
-    public bool IsGlobalModeEnabled { get; set; } = Runtime.Current.IsBrowserWasm();
+        = Runtime.Current.IsBrowserWasm();
 #endif
 
     /// <summary>

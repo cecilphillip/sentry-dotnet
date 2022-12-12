@@ -17,6 +17,7 @@ public class SentryMauiOptions : SentryLoggingOptions
         // Also, some of these are already set in the base Sentry SDK, but since we don't yet have native targets
         // there for all MAUI targets, we'll set them again here.
 
+        IsGlobalModeEnabled = true;
         AutoSessionTracking = true;
         DetectStartupTime = StartupTimeDetectionMode.Fast;
 #if !PLATFORM_NEUTRAL

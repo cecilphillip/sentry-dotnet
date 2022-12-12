@@ -140,6 +140,26 @@ public partial class SentryMauiAppBuilderExtensionsTests
     }
 
     [Fact]
+    public void UseSentry_CanDisableGlobalMode()
+    {
+        // Arrange
+        var builder = _fixture.Builder;
+
+        // Act
+        _ = builder.UseSentry(o =>
+        {
+            o.Dsn = ValidDsn;
+            o.IsGlobalModeEnabled = false;
+        });
+
+        using var app = builder.Build();
+        var options = app.Services.GetRequiredService<IOptions<SentryMauiOptions>>().Value;
+
+        // Assert
+        Assert.False(options.IsGlobalModeEnabled);
+    }
+
+    [Fact]
     public void UseSentry_SetsMauiSdkNameAndVersion()
     {
         // Arrange
