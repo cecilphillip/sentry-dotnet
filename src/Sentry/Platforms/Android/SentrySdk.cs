@@ -162,6 +162,9 @@ public static partial class SentrySdk
 
             // Don't capture managed exceptions in the native SDK, since we already capture them in the managed SDK
             o.AddIgnoredExceptionForType(JavaClass.ForName("android.runtime.JavaProxyThrowable"));
+
+            // As a hybrid SDK, we need to change the Android SDK name.
+            o.SentryClientName = "sentry.android.dotnet";
         });
 
         // Now initialize the Android SDK (with a logger only if we're debugging)
