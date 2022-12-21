@@ -2,9 +2,15 @@ namespace Sentry.iOS.Extensions;
 
 internal static class EnumExtensions
 {
-    // These align, so we can just cast
-    public static SentryLevel ToSentryLevel(this CocoaSdk.SentryLevel level) => (SentryLevel)level;
-    public static CocoaSdk.SentryLevel ToCocoaSentryLevel(this SentryLevel level) => (CocoaSdk.SentryLevel)level;
+    // Levels mostly align, so we can usually cast.  However, the Cocoa SDK uses SentryLevel.None instead of null.
+    public static SentryLevel? ToSentryLevel(this CocoaSdk.SentryLevel level) =>
+        level == CocoaSdk.SentryLevel.None ? null : (SentryLevel)level;
+
+    public static CocoaSdk.SentryLevel ToCocoaSentryLevel(this SentryLevel level) =>
+        (CocoaSdk.SentryLevel)level;
+
+    public static CocoaSdk.SentryLevel ToCocoaSentryLevel(this SentryLevel? level) =>
+        level == null ? CocoaSdk.SentryLevel.None : (CocoaSdk.SentryLevel)level;
 
     public static BreadcrumbLevel ToBreadcrumbLevel(this CocoaSdk.SentryLevel level) =>
         level switch
