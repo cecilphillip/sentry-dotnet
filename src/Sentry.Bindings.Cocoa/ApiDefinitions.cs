@@ -55,7 +55,7 @@ delegate NSNumber SentryTracesSamplerCallback (SentrySamplingContext samplingCon
 
 // typedef void (^SentrySpanCallback)(id<SentrySpan> _Nullable);
 [Internal]
-delegate void SentrySpanCallback ([NullAllowed] SentrySpan span);
+delegate void SentrySpanCallback ([NullAllowed] ISentrySpan span);
 
 // typedef void (^SentryOnAppStartMeasurementAvailable)(SentryAppStartMeasurement * _Nullable);
 [Internal]
@@ -197,7 +197,7 @@ interface SentryAppStartMeasurement
 }
 
 // @protocol SentrySerializable <NSObject>
-[Protocol] [Model]
+[Protocol]
 [BaseType (typeof(NSObject))]
 [DisableDefaultCtor]
 [Internal]
@@ -1070,9 +1070,9 @@ interface SentryOptions
 
 // @protocol SentryIntegrationProtocol <NSObject>
 [Protocol]
-[BaseType (typeof(NSObject))]
+[BaseType (typeof(NSObject), Name="SentryIntegrationProtocol")]
 [Internal]
-interface SentryIntegrationProtocol
+interface SentryIntegration
 {
     // @required -(BOOL)installWithOptions:(SentryOptions * _Nonnull)options;
     [Abstract]
@@ -1148,8 +1148,13 @@ interface SentrySpanContext : SentrySerializable
     string Type { get; }
 }
 
+// Manually added, because we need to reference the generated interface in other APIs, and [Model] is not appropriate here.
+// The generated interface will have all of the required members, even though it is declared empty here.
+// See https://learn.microsoft.com/en-us/xamarin/cross-platform/macios/binding/binding-types-reference#protocols
+interface ISentrySpan {}
+
 // @protocol SentrySpan <SentrySerializable>
-[Protocol, Model]
+[Protocol]
 [BaseType (typeof(NSObject))]
 [Internal]
 interface SentrySpan : SentrySerializable
@@ -1187,12 +1192,12 @@ interface SentrySpan : SentrySerializable
     // @required -(id<SentrySpan> _Nonnull)startChildWithOperation:(NSString * _Nonnull)operation __attribute__((swift_name("startChild(operation:)")));
     [Abstract]
     [Export ("startChildWithOperation:")]
-    SentrySpan StartChildWithOperation (string operation);
+    ISentrySpan StartChildWithOperation (string operation);
 
     // @required -(id<SentrySpan> _Nonnull)startChildWithOperation:(NSString * _Nonnull)operation description:(NSString * _Nullable)description __attribute__((swift_name("startChild(operation:description:)")));
     [Abstract]
     [Export ("startChildWithOperation:description:")]
-    SentrySpan StartChildWithOperation (string operation, [NullAllowed] string description);
+    ISentrySpan StartChildWithOperation (string operation, [NullAllowed] string description);
 
     // @required -(void)setDataValue:(id _Nullable)value forKey:(NSString * _Nonnull)key __attribute__((swift_name("setData(value:key:)")));
     [Abstract]
@@ -1281,27 +1286,27 @@ interface SentryHub
 
     // -(id<SentrySpan> _Nonnull)startTransactionWithName:(NSString * _Nonnull)name operation:(NSString * _Nonnull)operation __attribute__((swift_name("startTransaction(name:operation:)")));
     [Export ("startTransactionWithName:operation:")]
-    SentrySpan StartTransactionWithName (string name, string operation);
+    ISentrySpan StartTransactionWithName (string name, string operation);
 
     // -(id<SentrySpan> _Nonnull)startTransactionWithName:(NSString * _Nonnull)name operation:(NSString * _Nonnull)operation bindToScope:(BOOL)bindToScope __attribute__((swift_name("startTransaction(name:operation:bindToScope:)")));
     [Export ("startTransactionWithName:operation:bindToScope:")]
-    SentrySpan StartTransactionWithName (string name, string operation, bool bindToScope);
+    ISentrySpan StartTransactionWithName (string name, string operation, bool bindToScope);
 
     // -(id<SentrySpan> _Nonnull)startTransactionWithContext:(SentryTransactionContext * _Nonnull)transactionContext __attribute__((swift_name("startTransaction(transactionContext:)")));
     [Export ("startTransactionWithContext:")]
-    SentrySpan StartTransactionWithContext (SentryTransactionContext transactionContext);
+    ISentrySpan StartTransactionWithContext (SentryTransactionContext transactionContext);
 
     // -(id<SentrySpan> _Nonnull)startTransactionWithContext:(SentryTransactionContext * _Nonnull)transactionContext bindToScope:(BOOL)bindToScope __attribute__((swift_name("startTransaction(transactionContext:bindToScope:)")));
     [Export ("startTransactionWithContext:bindToScope:")]
-    SentrySpan StartTransactionWithContext (SentryTransactionContext transactionContext, bool bindToScope);
+    ISentrySpan StartTransactionWithContext (SentryTransactionContext transactionContext, bool bindToScope);
 
     // -(id<SentrySpan> _Nonnull)startTransactionWithContext:(SentryTransactionContext * _Nonnull)transactionContext bindToScope:(BOOL)bindToScope customSamplingContext:(NSDictionary<NSString *,id> * _Nonnull)customSamplingContext __attribute__((swift_name("startTransaction(transactionContext:bindToScope:customSamplingContext:)")));
     [Export ("startTransactionWithContext:bindToScope:customSamplingContext:")]
-    SentrySpan StartTransactionWithContext (SentryTransactionContext transactionContext, bool bindToScope, NSDictionary<NSString, NSObject> customSamplingContext);
+    ISentrySpan StartTransactionWithContext (SentryTransactionContext transactionContext, bool bindToScope, NSDictionary<NSString, NSObject> customSamplingContext);
 
     // -(id<SentrySpan> _Nonnull)startTransactionWithContext:(SentryTransactionContext * _Nonnull)transactionContext customSamplingContext:(NSDictionary<NSString *,id> * _Nonnull)customSamplingContext __attribute__((swift_name("startTransaction(transactionContext:customSamplingContext:)")));
     [Export ("startTransactionWithContext:customSamplingContext:")]
-    SentrySpan StartTransactionWithContext (SentryTransactionContext transactionContext, NSDictionary<NSString, NSObject> customSamplingContext);
+    ISentrySpan StartTransactionWithContext (SentryTransactionContext transactionContext, NSDictionary<NSString, NSObject> customSamplingContext);
 
     // -(SentryId * _Nonnull)captureError:(NSError * _Nonnull)error __attribute__((swift_name("capture(error:)")));
     [Export ("captureError:")]
@@ -1694,7 +1699,7 @@ interface SentrySdk
     // @property (readonly, nonatomic, class) id<SentrySpan> _Nullable span;
     [Static]
     [NullAllowed, Export ("span")]
-    SentrySpan Span { get; }
+    ISentrySpan Span { get; }
 
     // @property (readonly, nonatomic, class) BOOL isEnabled;
     [Static]
@@ -1734,32 +1739,32 @@ interface SentrySdk
     // +(id<SentrySpan> _Nonnull)startTransactionWithName:(NSString * _Nonnull)name operation:(NSString * _Nonnull)operation __attribute__((swift_name("startTransaction(name:operation:)")));
     [Static]
     [Export ("startTransactionWithName:operation:")]
-    SentrySpan StartTransactionWithName (string name, string operation);
+    ISentrySpan StartTransactionWithName (string name, string operation);
 
     // +(id<SentrySpan> _Nonnull)startTransactionWithName:(NSString * _Nonnull)name operation:(NSString * _Nonnull)operation bindToScope:(BOOL)bindToScope __attribute__((swift_name("startTransaction(name:operation:bindToScope:)")));
     [Static]
     [Export ("startTransactionWithName:operation:bindToScope:")]
-    SentrySpan StartTransactionWithName (string name, string operation, bool bindToScope);
+    ISentrySpan StartTransactionWithName (string name, string operation, bool bindToScope);
 
     // +(id<SentrySpan> _Nonnull)startTransactionWithContext:(SentryTransactionContext * _Nonnull)transactionContext __attribute__((swift_name("startTransaction(transactionContext:)")));
     [Static]
     [Export ("startTransactionWithContext:")]
-    SentrySpan StartTransactionWithContext (SentryTransactionContext transactionContext);
+    ISentrySpan StartTransactionWithContext (SentryTransactionContext transactionContext);
 
     // +(id<SentrySpan> _Nonnull)startTransactionWithContext:(SentryTransactionContext * _Nonnull)transactionContext bindToScope:(BOOL)bindToScope __attribute__((swift_name("startTransaction(transactionContext:bindToScope:)")));
     [Static]
     [Export ("startTransactionWithContext:bindToScope:")]
-    SentrySpan StartTransactionWithContext (SentryTransactionContext transactionContext, bool bindToScope);
+    ISentrySpan StartTransactionWithContext (SentryTransactionContext transactionContext, bool bindToScope);
 
     // +(id<SentrySpan> _Nonnull)startTransactionWithContext:(SentryTransactionContext * _Nonnull)transactionContext bindToScope:(BOOL)bindToScope customSamplingContext:(NSDictionary<NSString *,id> * _Nonnull)customSamplingContext __attribute__((swift_name("startTransaction(transactionContext:bindToScope:customSamplingContext:)")));
     [Static]
     [Export ("startTransactionWithContext:bindToScope:customSamplingContext:")]
-    SentrySpan StartTransactionWithContext (SentryTransactionContext transactionContext, bool bindToScope, NSDictionary<NSString, NSObject> customSamplingContext);
+    ISentrySpan StartTransactionWithContext (SentryTransactionContext transactionContext, bool bindToScope, NSDictionary<NSString, NSObject> customSamplingContext);
 
     // +(id<SentrySpan> _Nonnull)startTransactionWithContext:(SentryTransactionContext * _Nonnull)transactionContext customSamplingContext:(NSDictionary<NSString *,id> * _Nonnull)customSamplingContext __attribute__((swift_name("startTransaction(transactionContext:customSamplingContext:)")));
     [Static]
     [Export ("startTransactionWithContext:customSamplingContext:")]
-    SentrySpan StartTransactionWithContext (SentryTransactionContext transactionContext, NSDictionary<NSString, NSObject> customSamplingContext);
+    ISentrySpan StartTransactionWithContext (SentryTransactionContext transactionContext, NSDictionary<NSString, NSObject> customSamplingContext);
 
     // +(SentryId * _Nonnull)captureError:(NSError * _Nonnull)error __attribute__((swift_name("capture(error:)")));
     [Static]
@@ -1886,7 +1891,7 @@ interface SentryScope : SentrySerializable
 {
     // @property (nonatomic, strong) id<SentrySpan> _Nullable span;
     [NullAllowed, Export ("span", ArgumentSemantic.Strong)]
-    SentrySpan Span { get; set; }
+    ISentrySpan Span { get; set; }
 
     // -(instancetype _Nonnull)initWithMaxBreadcrumbs:(NSInteger)maxBreadcrumbs __attribute__((objc_designated_initializer));
     [Export ("initWithMaxBreadcrumbs:")]
