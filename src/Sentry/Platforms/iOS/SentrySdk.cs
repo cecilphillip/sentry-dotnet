@@ -56,7 +56,7 @@ public static partial class SentrySdk
                 var result = beforeBreadcrumb(breadcrumb)?.ToCocoaBreadcrumb();
 
                 // Note: Nullable result is allowed but delegate is generated incorrectly
-                // See https://github.com/xamarin/xamarin-macios/issues/15299#issuecomment-1201863294
+                // See https://github.com/xamarin/xamarin-macios/issues/17109
                 return result!;
             };
         }
@@ -74,7 +74,7 @@ public static partial class SentrySdk
                     var result = tracesSampler(context);
 
                     // Note: Nullable result is allowed but delegate is generated incorrectly
-                    // See https://github.com/xamarin/xamarin-macios/issues/15299#issuecomment-1201863294
+                    // See https://github.com/xamarin/xamarin-macios/issues/17109
                     return result!;
                 };
             }
@@ -90,7 +90,7 @@ public static partial class SentrySdk
         //         var result = beforeSend(sentryEvent)?.ToCocoaSentryEvent(options, cocoaOptions);
         //
         //         // Note: Nullable result is allowed but delegate is generated incorrectly
-        //         // See https://github.com/xamarin/xamarin-macios/issues/15299#issuecomment-1201863294
+        //         // See https://github.com/xamarin/xamarin-macios/issues/17109
         //         return result!;
         //     };
         // }
