@@ -1,4 +1,5 @@
 using Sentry.Extensibility;
+using Sentry.Internal.Extensions;
 
 namespace Sentry.iOS.Extensions;
 
@@ -24,7 +25,7 @@ internal static class UserExtensions
             IpAddress = user.IpAddress,
             Username = user.Username,
             Segment = user.Segment,
-            Data = user.Other.ToNullableNSDictionary()
+            Data = user.Other.NullIfEmpty()?.ToNSObjectDictionary()
         };
 
         return cocoaUser;

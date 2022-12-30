@@ -80,19 +80,6 @@ internal static class CocoaExtensions
         return result;
     }
 
-    public static Dictionary<string, string>? ToNullableStringDictionary<TValue>(
-        this NSDictionary<NSString, TValue>? dict,
-        IDiagnosticLogger? logger = null)
-        where TValue : NSObject
-    {
-        if (dict is null || dict.Count == 0)
-        {
-            return null;
-        }
-
-        return dict.ToStringDictionary(logger);
-    }
-
     public static Dictionary<string, object?> ToObjectDictionary<TValue>(
         this NSDictionary<NSString, TValue>? dict,
         IDiagnosticLogger? logger = null)
@@ -135,48 +122,36 @@ internal static class CocoaExtensions
         return result;
     }
 
-    public static Dictionary<string, object?>? ToNullableObjectDictionary<TValue>(
-        this NSDictionary<NSString, TValue>? dict,
-        IDiagnosticLogger? logger = null)
-        where TValue : NSObject
+    public static NSDictionary<NSString, TResultValue> ToNSDictionary<TValue, TResultValue>(
+        this IEnumerable<KeyValuePair<string, TValue>> dict,
+        Func<TValue, TResultValue> transform)
+        where TResultValue : NSObject
     {
-        if (dict is null || dict.Count == 0)
-        {
-            return null;
-        }
-
-        return dict.ToObjectDictionary(logger);
-    }
-
-    public static NSDictionary<NSString, NSObject> ToNSDictionary<TValue>(
-        this IEnumerable<KeyValuePair<string, TValue>> dict)
-    {
-        var d = new Dictionary<NSString, NSObject>();
+        var d = new Dictionary<NSString, TResultValue>();
         foreach (var item in dict)
         {
             // skip null values, but add others as NSObject
             if (item.Value is { } value)
             {
-                d.Add((NSString)item.Key, NSObject.FromObject(value));
+                d.Add((NSString)item.Key, transform(value));
             }
         }
 
-        return NSDictionary<NSString, NSObject>
-            .FromObjectsAndKeys(
-                d.Values.ToArray(),
-                d.Keys.ToArray());
+        var objects = d.Values.ToArray();
+        var keys = d.Keys.ToArray();
+        return NSDictionary<NSString, TResultValue>.FromObjectsAndKeys(objects, keys);
     }
 
-    public static NSDictionary<NSString, NSObject>? ToNullableNSDictionary<TValue>(
-        this ICollection<KeyValuePair<string, TValue>> dict) =>
-        dict.Count == 0 ? null : dict.ToNSDictionary();
+    public static NSDictionary<NSString, NSObject> ToNSObjectDictionary<TValue>(
+        this IEnumerable<KeyValuePair<string, TValue>> dict) =>
+        dict.ToNSDictionary<TValue, NSObject>(o => NSObject.FromObject(o));
 
-    public static NSDictionary<NSString, NSObject>? ToNullableNSDictionary<TValue>(
-        this IReadOnlyCollection<KeyValuePair<string, TValue>> dict) =>
-        dict.Count == 0 ? null : dict.ToNSDictionary();
+    public static NSDictionary<NSString, NSString> ToNSStringDictionary(
+        this IEnumerable<KeyValuePair<string, string>> dict) =>
+        dict.ToNSDictionary<string, NSString>(s => (NSString)s);
 
     /// <summary>
-    /// Converts an <see cref="NSNumber"/> to a .NET primitive data type and returns the result box in an <see cref="object"/>.
+    /// Converts an <see cref="NSNumber"/> to a .NET primitive data type and returns the result boxed in an <see cref="object"/>.
     /// </summary>
     /// <param name="n">The <see cref="NSNumber"/> to convert.</param>
     /// <returns>An <see cref="object"/> that contains the number in its primitive type.</returns>

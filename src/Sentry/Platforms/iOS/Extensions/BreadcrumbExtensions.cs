@@ -1,4 +1,5 @@
 using Sentry.Extensibility;
+using Sentry.Internal.Extensions;
 
 namespace Sentry.iOS.Extensions;
 
@@ -9,7 +10,7 @@ internal static class BreadcrumbExtensions
             breadcrumb.Timestamp?.ToDateTimeOffset(),
             breadcrumb.Message,
             breadcrumb.Type,
-            breadcrumb.Data.ToNullableStringDictionary(logger),
+            breadcrumb.Data?.ToStringDictionary(logger).NullIfEmpty(),
             breadcrumb.Category,
             breadcrumb.Level.ToBreadcrumbLevel());
 
@@ -19,7 +20,7 @@ internal static class BreadcrumbExtensions
             Timestamp = breadcrumb.Timestamp.ToNSDate(),
             Message = breadcrumb.Message,
             Type = breadcrumb.Type,
-            Data = breadcrumb.Data?.ToNullableNSDictionary(),
+            Data = breadcrumb.Data?.NullIfEmpty()?.ToNSObjectDictionary(),
             Category = breadcrumb.Category ?? "",
             Level = breadcrumb.Level.ToCocoaSentryLevel()
         };
