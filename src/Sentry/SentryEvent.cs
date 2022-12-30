@@ -269,7 +269,7 @@ public sealed class SentryEvent : IEventLike, IJsonSerializable, IHasDistributio
     {
         var modules = json.GetPropertyOrNull("modules")?.GetStringDictionaryOrNull();
         var eventId = json.GetPropertyOrNull("event_id")?.Pipe(SentryId.FromJson) ?? SentryId.Empty;
-        var timestamp = json.GetPropertyOrNull("timestamp")?.GetDateTimeOffset();
+        var timestamp = json.GetPropertyOrNull("timestamp")?.GetTimestampAsDateTimeOffset();
         var message = json.GetPropertyOrNull("logentry")?.Pipe(SentryMessage.FromJson);
         var logger = json.GetPropertyOrNull("logger")?.GetString();
         var platform = json.GetPropertyOrNull("platform")?.GetString();

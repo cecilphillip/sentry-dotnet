@@ -165,6 +165,24 @@ internal static class JsonExtensions
         throw new FormatException();
     }
 
+    public static DateTimeOffset GetTimestampAsDateTimeOffset(this JsonElement json)
+    {
+        // If the address is in json as a number, then it's a UNIX timestamp in seconds.
+        if (json.ValueKind == JsonValueKind.Number)
+        {
+            var timestamp = json.GetDouble();
+
+            // This approach avoids AddSeconds, which has rounding issues in .NET 6 and older.
+            // See https://github.com/dotnet/runtime/issues/66815
+            const long unixEpochTicks = 621355968000000000L;
+            var ticks = unixEpochTicks + (long)(timestamp * TimeSpan.TicksPerSecond);
+            return new DateTimeOffset(ticks, TimeSpan.Zero);
+        }
+
+        // Otherwise, it's a string in ISO 8601 format, which we can retrieve as normal.
+        return json.GetDateTimeOffset();
+    }
+
     public static string GetStringOrThrow(this JsonElement json) =>
         json.GetString() ?? throw new InvalidOperationException("JSON string is null.");
 

@@ -119,7 +119,7 @@ public sealed class App : IJsonSerializable, ICloneable<App>, IUpdatable<App>
     public static App FromJson(JsonElement json)
     {
         var identifier = json.GetPropertyOrNull("app_identifier")?.GetString();
-        var startTime = json.GetPropertyOrNull("app_start_time")?.GetDateTimeOffset();
+        var startTime = json.GetPropertyOrNull("app_start_time")?.GetTimestampAsDateTimeOffset();
         var hash = json.GetPropertyOrNull("device_app_hash")?.GetString();
         var buildType = json.GetPropertyOrNull("build_type")?.GetString();
         var name = json.GetPropertyOrNull("app_name")?.GetString();

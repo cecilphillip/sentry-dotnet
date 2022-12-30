@@ -123,8 +123,8 @@ public class Span : ISpanData, IJsonSerializable
         var spanId = json.GetPropertyOrNull("span_id")?.Pipe(SpanId.FromJson) ?? SpanId.Empty;
         var parentSpanId = json.GetPropertyOrNull("parent_span_id")?.Pipe(SpanId.FromJson);
         var traceId = json.GetPropertyOrNull("trace_id")?.Pipe(SentryId.FromJson) ?? SentryId.Empty;
-        var startTimestamp = json.GetProperty("start_timestamp").GetDateTimeOffset();
-        var endTimestamp = json.GetProperty("timestamp").GetDateTimeOffset();
+        var startTimestamp = json.GetProperty("start_timestamp").GetTimestampAsDateTimeOffset();
+        var endTimestamp = json.GetProperty("timestamp").GetTimestampAsDateTimeOffset();
         var operation = json.GetPropertyOrNull("op")?.GetString() ?? "unknown";
         var description = json.GetPropertyOrNull("description")?.GetString();
         var status = json.GetPropertyOrNull("status")?.GetString()?.Replace("_", "").ParseEnum<SpanStatus>();

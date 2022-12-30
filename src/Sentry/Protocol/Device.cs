@@ -442,7 +442,7 @@ public sealed class Device : IJsonSerializable, ICloneable<Device>, IUpdatable<D
         var screenResolution = json.GetPropertyOrNull("screen_resolution")?.GetString();
         var screenDensity = json.GetPropertyOrNull("screen_density")?.GetSingle();
         var screenDpi = json.GetPropertyOrNull("screen_dpi")?.GetInt32();
-        var bootTime = json.GetPropertyOrNull("boot_time")?.GetDateTimeOffset();
+        var bootTime = json.GetPropertyOrNull("boot_time")?.GetTimestampAsDateTimeOffset();
         var processorCount = json.GetPropertyOrNull("processor_count")?.GetInt32();
         var cpuDescription = json.GetPropertyOrNull("cpu_description")?.GetString();
         var processorFrequency = json.GetPropertyOrNull("processor_frequency")?.GetInt32();

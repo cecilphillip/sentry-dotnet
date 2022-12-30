@@ -168,14 +168,14 @@ public class SessionUpdate : ISession, IJsonSerializable
     {
         var id = json.GetProperty("sid").GetStringOrThrow().Pipe(SentryId.Parse);
         var distinctId = json.GetPropertyOrNull("did")?.GetString();
-        var startTimestamp = json.GetProperty("started").GetDateTimeOffset();
+        var startTimestamp = json.GetProperty("started").GetTimestampAsDateTimeOffset();
         var release = json.GetProperty("attrs").GetProperty("release").GetStringOrThrow();
         var environment = json.GetProperty("attrs").GetPropertyOrNull("environment")?.GetString();
         var ipAddress = json.GetProperty("attrs").GetPropertyOrNull("ip_address")?.GetString();
         var userAgent = json.GetProperty("attrs").GetPropertyOrNull("user_agent")?.GetString();
         var errorCount = json.GetPropertyOrNull("errors")?.GetInt32() ?? 0;
         var isInitial = json.GetPropertyOrNull("init")?.GetBoolean() ?? false;
-        var timestamp = json.GetProperty("timestamp").GetDateTimeOffset();
+        var timestamp = json.GetProperty("timestamp").GetTimestampAsDateTimeOffset();
         var sequenceNumber = json.GetProperty("seq").GetInt32();
         var endStatus = json.GetPropertyOrNull("status")?.GetString()?.ParseEnum<SessionEndStatus>();
 

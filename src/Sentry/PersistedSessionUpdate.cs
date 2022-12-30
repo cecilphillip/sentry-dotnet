@@ -32,7 +32,7 @@ internal class PersistedSessionUpdate : IJsonSerializable
     public static PersistedSessionUpdate FromJson(JsonElement json)
     {
         var update = SessionUpdate.FromJson(json.GetProperty("update"));
-        var pauseTimestamp = json.GetPropertyOrNull("paused")?.GetDateTimeOffset();
+        var pauseTimestamp = json.GetPropertyOrNull("paused")?.GetTimestampAsDateTimeOffset();
 
         return new PersistedSessionUpdate(update, pauseTimestamp);
     }

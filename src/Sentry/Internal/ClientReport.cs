@@ -48,7 +48,7 @@ internal class ClientReport : IJsonSerializable
     /// </summary>
     public static ClientReport FromJson(JsonElement json)
     {
-        var timestamp = json.GetProperty("timestamp").GetDateTimeOffset();
+        var timestamp = json.GetProperty("timestamp").GetTimestampAsDateTimeOffset();
         var discardedEvents = json.GetProperty("discarded_events").EnumerateArray()
             .Select(x => new
             {

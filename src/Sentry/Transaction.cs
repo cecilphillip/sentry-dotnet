@@ -340,8 +340,8 @@ public class Transaction : ITransactionData, IJsonSerializable, IHasDistribution
         var name = json.GetProperty("transaction").GetStringOrThrow();
         var nameSource = json.GetPropertyOrNull("transaction_info")?.GetPropertyOrNull("source")?
             .GetString()?.ParseEnum<TransactionNameSource>() ?? TransactionNameSource.Custom;
-        var startTimestamp = json.GetProperty("start_timestamp").GetDateTimeOffset();
-        var endTimestamp = json.GetPropertyOrNull("timestamp")?.GetDateTimeOffset();
+        var startTimestamp = json.GetProperty("start_timestamp").GetTimestampAsDateTimeOffset();
+        var endTimestamp = json.GetPropertyOrNull("timestamp")?.GetTimestampAsDateTimeOffset();
         var level = json.GetPropertyOrNull("level")?.GetString()?.ParseEnum<SentryLevel>();
         var platform = json.GetPropertyOrNull("platform")?.GetString();
         var release = json.GetPropertyOrNull("release")?.GetString();

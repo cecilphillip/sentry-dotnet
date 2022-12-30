@@ -131,7 +131,7 @@ public sealed class Breadcrumb : IJsonSerializable
     /// </summary>
     public static Breadcrumb FromJson(JsonElement json)
     {
-        var timestamp = json.GetPropertyOrNull("timestamp")?.GetDateTimeOffset();
+        var timestamp = json.GetPropertyOrNull("timestamp")?.GetTimestampAsDateTimeOffset();
         var message = json.GetPropertyOrNull("message")?.GetString();
         var type = json.GetPropertyOrNull("type")?.GetString();
         var data = json.GetPropertyOrNull("data")?.GetStringDictionaryOrNull();
