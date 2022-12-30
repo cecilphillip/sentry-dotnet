@@ -232,7 +232,7 @@ public partial class SentryOptions
         // /// implement all of the same features that may be present in the event graph. Some optional elements may
         // /// be stripped away during the round-tripping between the two SDKs.  Use with caution.
         // /// </remarks>
-        // public bool EnableCocoaSdkBeforeSend { get; set; }
+        // public bool EnableCocoaSdkBeforeSend { get; set; } = false;
 
         internal List<string>? InAppExcludes { get; private set; }
         internal List<string>? InAppIncludes { get; private set; }

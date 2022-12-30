@@ -80,25 +80,19 @@ public static partial class SentrySdk
             }
         }
 
-        // TODO: Finish SentryEventExtensions to enable these
-
-        // if (options.iOS.EnableCocoaSdkBeforeSend && options.BeforeSend is { } beforeSend)
-        // {
-        //     cocoaOptions.BeforeSend = evt =>
-        //     {
-        //         var sentryEvent = evt.ToSentryEvent(cocoaOptions);
-        //         var result = beforeSend(sentryEvent)?.ToCocoaSentryEvent(options, cocoaOptions);
-        //
-        //         // Note: Nullable result is allowed but delegate is generated incorrectly
-        //         // See https://github.com/xamarin/xamarin-macios/issues/17109
-        //         return result!;
-        //     };
-        // }
-
         // if (options.iOS.OnCrashedLastRun is { } onCrashedLastRun)
         // {
         //     cocoaOptions.OnCrashedLastRun = evt =>
         //     {
+        //         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+        //         if (evt == null)
+        //         {
+        //             // We got a null event. This shouldn't happen, but does for some reason when the crash is
+        //             // due to an unhandled .NET exception.
+        //             // TODO: Investigate and resolve.
+        //             return;
+        //         }
+        //
         //         var sentryEvent = evt.ToSentryEvent(cocoaOptions);
         //         onCrashedLastRun(sentryEvent);
         //     };
@@ -152,12 +146,27 @@ public static partial class SentrySdk
                     ex.Stacktrace?.Frames.Any(f => f.Function == "xamarin_unhandled_exception_handler") is true)
                 {
                     // Don't sent it
+                    // Note: Nullable result is allowed but delegate is generated incorrectly
+                    // See https://github.com/xamarin/xamarin-macios/issues/17109
                     return null!;
                 }
             }
 
-            // Other event, send as normal
             return evt;
+
+            // // Other event, and BeforeSend not enable or not defined.  Just send the event.
+            // if (!options.iOS.EnableCocoaSdkBeforeSend || options.BeforeSend is not { } beforeSend)
+            // {
+            //     return evt;
+            // }
+            //
+            // // Call the managed BeforeSend
+            // var sentryEvent = evt.ToSentryEvent(cocoaOptions);
+            // var result = beforeSend(sentryEvent)?.ToCocoaSentryEvent(options, cocoaOptions);
+            //
+            // // Note: Nullable result is allowed but delegate is generated incorrectly
+            // // See https://github.com/xamarin/xamarin-macios/issues/17109
+            // return result!;
         };
 
         // Now initialize the Cocoa SDK
