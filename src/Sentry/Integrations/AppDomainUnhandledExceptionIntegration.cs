@@ -1,3 +1,4 @@
+using Sentry.Extensibility;
 using Sentry.Internal;
 using Sentry.Protocol;
 
@@ -26,6 +27,8 @@ internal class AppDomainUnhandledExceptionIntegration : ISdkIntegration
     [SecurityCritical]
     internal void Handle(object sender, UnhandledExceptionEventArgs e)
     {
+        _options?.LogDebug("AppDomain Unhandled Exception");
+
         if (e.ExceptionObject is Exception ex)
         {
             ex.Data[Mechanism.HandledKey] = false;
