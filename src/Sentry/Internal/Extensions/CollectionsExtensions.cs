@@ -58,4 +58,25 @@ internal static class CollectionsExtensions
 
     public static IEnumerable<T> ExceptNulls<T>(this IEnumerable<T?> source) =>
         source.Where(x => x != null).Select(x => x!);
+
+    public static T[]? NullIfEmpty<T>(this T[] array) =>
+        array.Length == 0 ? null : array;
+
+    public static Dictionary<TKey, TValue>? NullIfEmpty<TKey, TValue>(this Dictionary<TKey, TValue> dictionary)
+        where TKey : notnull =>
+        dictionary.Count == 0 ? null : dictionary;
+
+    public static IDictionary<TKey, TValue>? NullIfEmpty<TKey, TValue>(this IDictionary<TKey, TValue> dictionary)
+        where TKey : notnull =>
+        dictionary.Count == 0 ? null : dictionary;
+
+    public static IReadOnlyDictionary<TKey, TValue>? NullIfEmpty<TKey, TValue>(this IReadOnlyDictionary<TKey, TValue> dictionary)
+        where TKey : notnull =>
+        dictionary.Count == 0 ? null : dictionary;
+
+    public static IReadOnlyList<T>? NullIfEmpty<T>(this IReadOnlyList<T> list) =>
+        list.Count == 0 ? null : list;
+
+    public static IReadOnlyCollection<T>? NullIfEmpty<T>(this IReadOnlyCollection<T> collection) =>
+        collection.Count == 0 ? null : collection;
 }
